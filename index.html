@@ -44,6 +44,24 @@
   .eyebrow{font-family:"Bahnschrift","Arial Narrow",Arial,sans-serif;font-stretch:condensed;text-transform:uppercase;letter-spacing:.28em;font-size:.78rem;color:var(--amber);font-weight:600}
   .num{font-variant-numeric:tabular-nums}
 
+  /* ---------- TABS / VISTE ---------- */
+  .tabs{position:sticky;top:0;z-index:20;background:#0c141fe6;backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .tabs .wrap{display:flex;gap:10px;padding-top:12px;padding-bottom:12px}
+  .tab{flex:1;max-width:280px;display:flex;align-items:center;justify-content:center;gap:9px;background:none;border:1px solid var(--line);color:var(--mist);border-radius:10px;padding:11px 18px;font-family:"Bahnschrift","Arial Narrow",Arial,sans-serif;font-stretch:condensed;text-transform:uppercase;letter-spacing:.12em;font-size:.92rem;cursor:pointer;transition:all .15s}
+  .tab:hover{border-color:var(--amber);color:var(--foam)}
+  .tab[aria-selected="true"]{background:var(--amber);border-color:var(--amber);color:var(--ink);font-weight:700}
+  .vcalc,.vres{display:none}
+  body[data-view="calc"] .vcalc{display:block}
+  body[data-view="res"] .vres{display:block}
+
+  /* ---------- CALCOLATORE ---------- */
+  .calcbar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 20px;margin-bottom:18px}
+  .calcbar label{font-size:.95rem;color:var(--foam);font-weight:600}
+  .calcbar input{width:110px;background:var(--panel-solid);border:1px solid var(--line);color:var(--foam);border-radius:8px;padding:10px 12px;font:inherit;font-size:1.3rem;font-variant-numeric:tabular-nums;text-align:center}
+  .calcbar input:focus{outline:2px solid var(--amber);border-color:var(--amber)}
+  .calcbar small{color:var(--mist);flex-basis:100%;line-height:1.5}
+  @media(min-width:700px){.calcbar small{flex-basis:auto;flex:1}}
+
   /* ---------- HERO ---------- */
   header{padding:72px 0 40px;border-bottom:1px solid var(--line);position:relative;overflow:hidden}
   header .wrap{position:relative;z-index:1}
@@ -148,19 +166,40 @@
   <div class="wrap">
     <span class="eyebrow">Match Day Fuel · One Piece TCG</span>
     <h1 class="display hero-title">Carburante per<br><em>11 round</em> di Swiss</h1>
-    <p class="hero-sub">Il piano operativo per arrivare al round 11 lucido come al round 1: cosa mangiare, quando, e cosa mettere nello zaino. Costruito su fonti verificate (RCT esports, routine di Carlsen, Reid Duke) e tarato su di te.</p>
-    <div class="statgrid num">
-      <div class="stat"><b>77<span>kg</span></b><small>Peso · 185 cm</small></div>
-      <div class="stat"><b>10–11</b><small>Round Swiss</small></div>
-      <div class="stat"><b>~40<span>min</span></b><small>a round + overtime</small></div>
-      <div class="stat"><b>77–230<span>mg</span></b><small>Caffeina utile</small></div>
-      <div class="stat"><b>2–2,5<span>L</span></b><small>Acqua in giornata</small></div>
-    </div>
+    <p class="hero-sub">Il piano operativo per arrivare al round 11 lucido come al round 1. Due sezioni: il <strong>Calcolatore</strong> con dosi, timeline e checklist zaino, e le <strong>Risorse</strong> con i principi e le fonti dietro al piano.</p>
   </div>
   <svg class="waves" viewBox="0 0 1200 70" preserveAspectRatio="none" aria-hidden="true"><path d="M0 45 Q 75 20 150 45 T 300 45 T 450 45 T 600 45 T 750 45 T 900 45 T 1050 45 T 1200 45 V70 H0 Z" fill="#16233466"/><path d="M0 55 Q 100 35 200 55 T 400 55 T 600 55 T 800 55 T 1000 55 T 1200 55 V70 H0 Z" fill="#1b2c42aa"/></svg>
 </header>
 
-<section id="principi">
+<nav class="tabs" aria-label="Sezioni del sito">
+  <div class="wrap">
+    <button class="tab" type="button" data-view="calc" aria-selected="true"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="4" y="2" width="16" height="20" rx="3"/><path d="M8 6h8M8 11h.01M12 11h.01M16 11h.01M8 15h.01M12 15h.01M16 15h.01M8 19h8"/></svg>Calcolatore</button>
+    <button class="tab" type="button" data-view="res" aria-selected="false"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 19V5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2zm0 0a2 2 0 0 0 2 2h13"/></svg>Risorse</button>
+  </div>
+</nav>
+
+<section id="calcolo" class="vcalc">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2 class="display">Le tue dosi</h2>
+      <p>Inserisci il peso: caffeina, acqua e carb-loading si ricalcolano da soli (e il valore resta salvato).</p>
+    </div>
+    <div class="calcbar num">
+      <label for="peso">Peso (kg)</label>
+      <input id="peso" type="number" min="40" max="150" step="1" value="77" inputmode="numeric">
+      <small>Formule: caffeina 1–3 mg/kg per dose · acqua ~30 ml/kg in giornata · pasta della sera prima ~1,6–2 g/kg</small>
+    </div>
+    <div class="statgrid num">
+      <div class="stat"><b id="stCaf">77–230<span>mg</span></b><small>Caffeina utile</small></div>
+      <div class="stat"><b id="stAcqua">2,3<span>L</span></b><small>Acqua in giornata</small></div>
+      <div class="stat"><b id="stPasta">125–155<span>g</span></b><small>Pasta sera prima</small></div>
+      <div class="stat"><b>10–11</b><small>Round Swiss</small></div>
+      <div class="stat"><b>16:00</b><small>Stop caffeina</small></div>
+    </div>
+  </div>
+</section>
+
+<section id="principi" class="vres">
   <div class="wrap">
     <div class="sec-head">
       <h2 class="display">I 6 principi</h2>
@@ -207,11 +246,11 @@
   </div>
 </section>
 
-<section id="giornata">
+<section id="giornata" class="vcalc">
   <div class="wrap">
     <div class="sec-head">
       <h2 class="display">La giornata, ora per ora</h2>
-      <p>Quantità tarate su 77 kg. Semplice, zero pentole: funziona in hotel, in B&amp;B e al venue.</p>
+      <p>Quantità tarate sul peso impostato sopra. Semplice, zero pentole: funziona in hotel, in B&amp;B e al venue.</p>
     </div>
     <div class="tl">
       <div class="tl-item">
@@ -275,7 +314,7 @@
   </div>
 </section>
 
-<section id="caffeina">
+<section id="caffeina" class="vcalc">
   <div class="wrap">
     <div class="sec-head">
       <h2 class="display">Dosaggio caffeina</h2>
@@ -283,13 +322,13 @@
     </div>
     <div class="caf">
       <div class="gauge num">
-        <h3>La tua finestra: 77–230 mg</h3>
-        <div class="track" role="img" aria-label="Finestra utile di caffeina tra 77 e 230 milligrammi, limite giornaliero 400 milligrammi">
-          <span class="zone"></span>
+        <h3 id="gaugeTitle">La tua finestra: 77–230 mg</h3>
+        <div class="track" role="img" aria-label="Finestra utile di caffeina in milligrammi, limite giornaliero 400 milligrammi">
+          <span class="zone" id="gaugeZone"></span>
           <span class="limit"></span>
         </div>
         <div class="ticks"><span>0</span><span>100</span><span>200</span><span>300</span><span>400 mg</span></div>
-        <p>La zona verde-ambra è la dose che migliora reazione e precisione (1–3 mg/kg × 77 kg). La riga rossa è il tetto giornaliero: oltre non giochi meglio, dormi peggio e nel trial sugli scacchi <strong>si perdeva di più per tempo</strong>.</p>
+        <p>La zona verde-ambra è la dose che migliora reazione e precisione (1–3 mg/kg × <span id="gaugeKg">77</span> kg). La riga rossa è il tetto giornaliero: oltre non giochi meglio, dormi peggio e nel trial sugli scacchi <strong>si perdeva di più per tempo</strong>.</p>
       </div>
       <div class="doses">
         <div class="dose">
@@ -309,7 +348,7 @@
   </div>
 </section>
 
-<section id="zaino">
+<section id="zaino" class="vcalc">
   <div class="wrap">
     <div class="sec-head">
       <h2 class="display">Lo zaino</h2>
@@ -342,7 +381,7 @@
   </div>
 </section>
 
-<section id="no">
+<section id="no" class="vres">
   <div class="wrap">
     <div class="sec-head">
       <h2 class="display">I 4 errori che ti costano il top cut</h2>
@@ -356,7 +395,7 @@
   </div>
 </section>
 
-<footer>
+<footer class="vres">
   <div class="wrap">
     <h2 class="display" style="font-size:1.5rem">Fonti principali</h2>
     <ul>
@@ -398,6 +437,39 @@
     update();
   });
   update();
+})();
+
+(function(){
+  var tabs=document.querySelectorAll(".tab");
+  function setView(v){
+    document.body.dataset.view=v;
+    tabs.forEach(function(t){ t.setAttribute("aria-selected", t.dataset.view===v ? "true" : "false"); });
+    try{ history.replaceState(null,"", v==="res" ? "#risorse" : "#calcolatore"); }catch(e){}
+    window.scrollTo(0,0);
+  }
+  tabs.forEach(function(t){ t.addEventListener("click",function(){ setView(t.dataset.view); }); });
+  setView(location.hash==="#risorse" ? "res" : "calc");
+
+  var peso=document.getElementById("peso");
+  try{ var pv=localStorage.getItem("matchDayFuelPeso"); if(pv) peso.value=pv; }catch(e){}
+  function calc(){
+    var w=parseFloat(peso.value);
+    if(!w || w<30 || w>200) return;
+    try{ localStorage.setItem("matchDayFuelPeso", peso.value); }catch(e){}
+    var lo=Math.round(w), hi=Math.round(3*w);
+    document.getElementById("stCaf").innerHTML=lo+"–"+hi+"<span>mg</span>";
+    var acqua=(w*30/1000).toFixed(1).replace(".",",");
+    document.getElementById("stAcqua").innerHTML=acqua+"<span>L</span>";
+    var pLo=Math.round(w*1.6/5)*5, pHi=Math.round(w*2/5)*5;
+    document.getElementById("stPasta").innerHTML=pLo+"–"+pHi+"<span>g</span>";
+    document.getElementById("gaugeTitle").textContent="La tua finestra: "+lo+"–"+hi+" mg";
+    document.getElementById("gaugeKg").textContent=Math.round(w);
+    var z=document.getElementById("gaugeZone");
+    z.style.left=(lo/400*100)+"%";
+    z.style.width=(Math.min(hi,400)-lo)/400*100+"%";
+  }
+  peso.addEventListener("input",calc);
+  calc();
 })();
 </script>
 </body>
