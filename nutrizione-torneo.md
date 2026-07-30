@@ -35,7 +35,7 @@ L'obiettivo non è mangiare continuamente né seguire formule complicate: è arr
 
 ## Preparazione
 
-1. Fai un panino e dividilo in due metà.
+1. Fai un panino, dividilo in due metà e tienilo in frigo fino alla partenza. Portalo freddo, in una borsa termica con ghiaccetto; se non puoi mantenerlo freddo, compralo fresco la mattina.
 2. Prepara un sacchetto con 30 g di frutta secca e 35–40 g di albicocche.
 3. Metti nello zaino polpe, barrette, borraccia, elettroliti, gomme e oggetti pratici.
 
