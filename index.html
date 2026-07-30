@@ -55,6 +55,16 @@
   body[data-view="res"] .vres{display:block}
 
   /* ---------- CALCOLATORE ---------- */
+  .fmts{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+  @media(max-width:700px){.fmts{grid-template-columns:1fr}}
+  .fmt{background:var(--panel);border:1px solid var(--line);color:var(--foam);border-radius:12px;padding:14px 16px;font:inherit;text-align:left;cursor:pointer;transition:all .15s}
+  .fmt:hover{border-color:var(--amber)}
+  .fmt[aria-pressed="true"]{border-color:var(--amber);background:var(--amber-dim);box-shadow:inset 0 0 0 1px var(--amber)}
+  .fmt b{display:block;font-family:"Bahnschrift","Arial Narrow",Arial,sans-serif;font-stretch:condensed;text-transform:uppercase;letter-spacing:.06em;font-size:1.05rem}
+  .fmt[aria-pressed="true"] b{color:var(--amber)}
+  .fmt small{color:var(--mist);font-size:.8rem;line-height:1.4;display:block}
+  .fmt-note{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--amber);border-radius:8px;padding:12px 16px;margin:14px 0 0;color:var(--mist);font-size:.92rem;max-width:75ch}
+  .fmt-note strong{color:var(--foam)}
   .calcbar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 20px;margin-bottom:18px}
   .calcbar label{font-size:.95rem;color:var(--foam);font-weight:600}
   .calcbar input{width:110px;background:var(--panel-solid);border:1px solid var(--line);color:var(--foam);border-radius:8px;padding:10px 12px;font:inherit;font-size:1.3rem;font-variant-numeric:tabular-nums;text-align:center}
@@ -188,10 +198,16 @@
 <section id="calcolo" class="vcalc">
   <div class="wrap">
     <div class="sec-head">
-      <h2 class="display">Le tue dosi</h2>
-      <p>Inserisci il peso: caffeina, acqua e carb-loading si ricalcolano da soli (e il valore resta salvato).</p>
+      <h2 class="display">Che torneo giochi?</h2>
+      <p>Scegli il formato e inserisci il peso: round, timeline e dosi si adattano da soli (e restano salvati).</p>
     </div>
-    <div class="calcbar num">
+    <div class="fmts" role="group" aria-label="Formato del torneo">
+      <button class="fmt" type="button" data-fmt="regional" aria-pressed="true"><b>Regional · sabato</b><small>10–11 turni di Swiss, la giornata piena</small></button>
+      <button class="fmt" type="button" data-fmt="treasure" aria-pressed="false"><b>Treasure Cup · domenica</b><small>9–10 turni, si gioca sulla stanchezza di sabato</small></button>
+      <button class="fmt" type="button" data-fmt="tre" aria-pressed="false"><b>3v3 / evento corto</b><small>~7 turni + eventuale top cut, start ore 10</small></button>
+    </div>
+    <div class="fmt-note" id="fmtNote"></div>
+    <div class="calcbar num" style="margin-top:14px">
       <label for="peso">Peso (kg)</label>
       <input id="peso" type="number" min="40" max="150" step="1" value="77" inputmode="numeric">
       <small>Formule: caffeina 1–3 mg/kg per dose · acqua ~30 ml/kg in giornata · pasta della sera prima ~1,6–2 g/kg</small>
@@ -200,8 +216,8 @@
       <div class="stat"><b id="stCaf">77–230<span>mg</span></b><small>Caffeina utile</small></div>
       <div class="stat"><b id="stAcqua">2,3<span>L</span></b><small>Acqua in giornata</small></div>
       <div class="stat"><b id="stPasta">125–155<span>g</span></b><small>Pasta sera prima</small></div>
-      <div class="stat"><b>10–11</b><small>Round Swiss</small></div>
-      <div class="stat"><b>16:00</b><small>Stop caffeina</small></div>
+      <div class="stat"><b id="stRound">10–11</b><small>Round Swiss</small></div>
+      <div class="stat"><b id="stStop">16:00</b><small>Stop caffeina</small></div>
     </div>
   </div>
 </section>
@@ -287,13 +303,13 @@
       </div>
       <div class="tl-item">
         <span class="tl-dot" aria-hidden="true"></span>
-        <span class="tl-time">Round 2–3</span>
+        <span class="tl-time" id="tlA">Round 2–3</span>
         <h3>Primo rifornimento</h3>
         <p>Banana o mela tra un pairing e l'altro. Sorsi d'acqua costanti: <strong>~150–250 ml a round</strong>, bagno a ogni pairing (non "quando scappa").</p>
       </div>
       <div class="tl-item">
         <span class="tl-dot" aria-hidden="true"></span>
-        <span class="tl-time">Round 4–5 · il "pranzo"</span>
+        <span class="tl-time" id="tlB">Round 4–5 · il "pranzo"</span>
         <h3>Leggero e proteico — 10 minuti, zero unto</h3>
         <p>Panino o tramezzino confezionato (prosciutto/bresaola, <strong>~15 g di proteine</strong>) comprato la mattina al bar o supermercato: fuori dal frigo regge tranquillamente fino a metà giornata. È qui che si vince il pomeriggio: <strong>niente pizza o fritti del venue</strong>, l'abbiocco del round 6 nasce lì. Salviette per le mani prima di toccare le carte.</p>
         <div class="menu">
@@ -304,21 +320,21 @@
       </div>
       <div class="tl-item warn">
         <span class="tl-dot" aria-hidden="true"></span>
-        <span class="tl-time">Round 6 · entro le 16:00</span>
+        <span class="tl-time" id="tlC">Round 6 · entro le 16:00</span>
         <h3>Seconda dose di caffeina — poi stop</h3>
-        <p>Caffè al venue <strong>o Red Bull (la zero zuccheri)</strong>: una lattina da 250 ml = 80 mg, esattamente ~1 mg/kg per te. Dopo le 16 niente più caffeina: il day 2 si gioca col sonno di stanotte.</p>
+        <p>Caffè al venue <strong>o Red Bull (la zero zuccheri)</strong>: una lattina da 250 ml = 80 mg, esattamente ~1 mg/kg per te. Dopo quest'ora niente più caffeina: domani si gioca col sonno di stanotte.</p>
       </div>
       <div class="tl-item">
         <span class="tl-dot" aria-hidden="true"></span>
-        <span class="tl-time">Round 7–8</span>
+        <span class="tl-time" id="tlD">Round 7–8</span>
         <h3>Sostegno lungo</h3>
         <p>Frutta secca (<strong>sacchetto da 30 g</strong>, già porzionato — se porti il pacco intero lo finisci al round 3) + 2 quadretti di fondente 70%.</p>
         <figure class="tl-photo"><img src="img/noci.jpg" alt="Ciotola di frutta secca mista" loading="lazy"></figure>
       </div>
       <div class="tl-item">
         <span class="tl-dot" aria-hidden="true"></span>
-        <span class="tl-time">Round 9–11 · il rush finale</span>
-        <h3>Proteine per chiudere</h3>
+        <span class="tl-time" id="tlE">Round 9–11 · il rush finale</span>
+        <h3 id="tlEh">Proteine per chiudere</h3>
         <p>Shaker con un misurino di proteine (<strong>~24 g</strong>) riempito alla fontanella — 30 secondi, zero unto — oppure barretta proteica (&gt;10 g) con la frutta rimasta. Qui gli altri crollano: <strong>tu no</strong>.</p>
       </div>
     </div>
@@ -490,6 +506,33 @@
   }
   peso.addEventListener("input",calc);
   calc();
+
+  var FORMATS={
+    regional:{round:"10–11",stop:"16:00",
+      note:"<strong>Sabato, la giornata piena: 10–11 turni di Swiss.</strong> Se domenica giochi anche la Treasure Cup, la serata di sabato è parte del torneo: cena leggera con carboidrati, niente alcol, a letto presto.",
+      A:"Round 2–3",B:"Round 4–5 · il \"pranzo\"",C:"Round 6 · entro le 16:00",D:"Round 7–8",E:"Round 9–11 · il rush finale",Eh:"Proteine per chiudere"},
+    treasure:{round:"9–10",stop:"16:00",
+      note:"<strong>Domenica: si gioca sulla stanchezza di sabato.</strong> Colazione piena anche se sei distrutto, prima dose di caffeina già prima del round 1, e idratazione dal mattino: da ieri sei in deficit anche se non lo senti.",
+      A:"Round 2–3",B:"Round 4–5 · il \"pranzo\"",C:"Round 5–6 · entro le 16:00",D:"Round 7",E:"Round 8–10 · il rush finale",Eh:"Proteine per chiudere"},
+    tre:{round:"~7 + top",stop:"15:00",
+      note:"<strong>Start ore 10, ~7 turni di Swiss + eventuale top cut (non garantita).</strong> Colazione entro le 8:30. Preparati come se la top ci fosse: la riserva proteica (shaker o barretta) resta nello zaino per il post-Swiss.",
+      A:"Round 2",B:"Round 3–4 · il \"pranzo\" (~13:30)",C:"Round 5 · entro le 15:00",D:"Round 6",E:"Round 7 + top cut",Eh:"Proteine per chiudere (e per la top)"}
+  };
+  var fmtBtns=document.querySelectorAll(".fmt");
+  function setFmt(k){
+    var f=FORMATS[k]||FORMATS.regional;
+    fmtBtns.forEach(function(b){ b.setAttribute("aria-pressed", b.dataset.fmt===k ? "true" : "false"); });
+    try{ localStorage.setItem("matchDayFuelFmt",k); }catch(e){}
+    document.getElementById("stRound").textContent=f.round;
+    document.getElementById("stStop").textContent=f.stop;
+    document.getElementById("fmtNote").innerHTML=f.note;
+    ["A","B","C","D","E"].forEach(function(id){ document.getElementById("tl"+id).textContent=f[id]; });
+    document.getElementById("tlEh").textContent=f.Eh;
+  }
+  fmtBtns.forEach(function(b){ b.addEventListener("click",function(){ setFmt(b.dataset.fmt); }); });
+  var savedF="regional";
+  try{ savedF=localStorage.getItem("matchDayFuelFmt")||"regional"; }catch(e){}
+  setFmt(savedF);
 })();
 </script>
 </body>
